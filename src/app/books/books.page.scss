@@ -1,0 +1,279 @@
+.books-container{
+  display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-height: 100vh;
+    overflow-y: auto;
+    margin: 0 auto;
+}
+
+.emptyImage {
+    
+    height: 80vh;
+    img {
+      width: 100%;
+      max-width: 300px;
+      object-fit: contain;
+      margin-top: 20px;
+      display: flex;
+      margin: 0 auto;
+    }
+  }
+
+  .card-row {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of cards */
+    justify-content: space-between;
+    width: 98%; /* Use full width for the row */
+    margin: 20px 1% 208px 1%; /* Add margin to the top and bottom */
+}
+
+.card-col {
+    flex: 0 0 48%; /* Take up 48% of the row to have two cards per row */
+    margin-bottom: 20px; /* Add margin at the bottom for spacing */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+  
+  .book-card {
+    background-color: #eeece1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    min-height: 364px;
+  }
+  
+  .book-card img {
+    width: 128px;
+    height: 220px;
+    margin-bottom: 10px;
+  }
+  
+  .book-card h4 {
+    font-size: 16px;
+    margin: 10px 0;
+    background: #eeece1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit the title to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 40px; /* Ensures uniform height for all titles */
+}
+  
+.book-card p {
+    font-size: 14px;
+    color: #666;
+    background: #eeece1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit the author to 1 line */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 20px; /* Ensures uniform height for author names */
+}
+
+.selected-book-details {
+  background-color: #eeece1; // White background for the card
+  border-radius: 8px; // Rounded corners
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow effect
+  padding: 20px; // Padding around the content
+  width: 96%; // Maximum width of the card
+  margin: 20px 2%; // Center the card on the page
+  transition: transform 0.2s ease; // Smooth scaling on hover
+  overflow-y: scroll;
+  max-height: 80vh;
+
+  &:hover {
+    transform: scale(1.02); // Slightly scale up on hover
+  }
+
+  h2 {
+    font-size: 1.5rem; // Title font size
+    color: #333; // Dark text color
+    margin-bottom: 10px; // Margin below the title
+    text-align: center;
+    background-color: #eeece1;
+  }
+
+  img {
+    border-radius: 4px; // Round the image corners
+    margin-bottom: 15px; // Margin below the image
+    object-fit: cover; // Cover the entire area of the image
+    height: 150px; // Fixed height for the image
+    width: 100px !important; // Full width
+    display: block;
+    margin: 0 auto;
+    background: #e6e0ec;
+  }
+
+  h4 {
+    font-size: 1.2rem; // Author name font size
+    color: #555; // Slightly lighter text color
+    margin-bottom: 5px; // Margin below the author name
+    text-align: center;
+    background-color: #eeece1;
+  }
+
+  p {
+    color: #666; // Gray text color for other details
+    line-height: 1.5; // Increase line height for readability
+    margin: 5px 0; // Vertical margin between paragraphs
+    text-align: center;
+    background: #e6e0ec;
+  }
+
+  strong {
+    color: #000; // Strong text color (like headings)
+    background: #e6e0ec;
+  }
+
+  .close {
+    display: inline-block; // Makes it behave like a block element
+    cursor: pointer; // Show a pointer cursor on hover
+    background-color: #ff5f5f; // Red background color
+    color: white; // White text color
+    border: none; // No border
+    border-radius: 4px; // Rounded corners
+    padding: 5px 10px; // Padding around the text
+    margin-bottom: 15px; // Margin below the close button
+    text-align: center; // Center the text
+    width: 100%;
+
+    &:hover {
+      background-color: #ff3d3d; // Darker red on hover
+    }
+  }
+}
+
+.details-font-bg{
+  background-color: #e6e0ec; /* Background color for tags */
+  border-radius: 5px; /* Rounded corners */
+  padding: 5px 10px; /* Padding for spacing */
+  margin-right: 10px; /* Spacing between tags */
+  font-size: 14px; /* Font size */
+  gap: 5px;
+}
+
+.details-font-bg img{
+  width: 30px !important;
+  height: 30px;
+}
+
+.tag-popup {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  right: 0;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it appears on top */
+  backdrop-filter: blur(5px); /* Optional: add a blur effect to the background */
+  transition: opacity 0.3s ease; /* Smooth fade-in/out effect */
+}
+
+.popup-content {
+  background: white;
+  padding: 30px; /* Increased padding for better spacing */
+  border-radius: 10px; /* Slightly more rounded corners */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* More pronounced shadow for depth */
+  width: 400px; /* Set a fixed width */
+  max-width: 90%; /* Ensure responsiveness on smaller screens */
+  position: relative; /* Enable positioning of close button */
+}
+
+.popup-content h4 {
+  margin: 0 0 20px 0; /* Add margin to space out title from input */
+  font-size: 1.5em; /* Make title larger */
+  text-align: center; /* Center the title */
+  background: white;
+}
+
+.popup-content input[type="text"] {
+  width: 100%; /* Full width for input */
+  padding: 10px; /* Padding inside the input for comfort */
+  margin-bottom: 20px; /* Spacing below input */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px; /* Rounded corners for input */
+  font-size: 1em; /* Adjust font size */
+}
+
+.popup-content button {
+  margin: 8px auto;
+  width: 100%; /* Full width for buttons */
+  padding: 10px; /* Padding for buttons */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners for buttons */
+  font-size: 1em; /* Adjust font size */
+  cursor: pointer; /* Pointer cursor for buttons */
+  transition: background-color 0.3s; /* Smooth background color change */
+  background-color: #ff5f5f;
+}
+
+.popup-content button:hover {
+  background-color: #ff5f5f; /* Light background on hover */
+}
+
+.popup-content .cancel-button {
+  background-color: #ff5f5f; /* Red background for cancel button */
+  color: white; /* White text for contrast */
+}
+
+.popup-content .cancel-button:hover {
+  background-color: #ff5f5f; /* Darker red on hover */
+}
+
+.close-popup {
+  position: absolute; /* Position close button */
+  top: 10px; /* Positioning from the top */
+  right: 10px; /* Positioning from the right */
+  cursor: pointer; /* Pointer cursor for close button */
+  font-size: 1.2em; /* Size of close button */
+  color: #aaa; /* Color for close button */
+}
+
+.close-popup:hover {
+  color: #f44336; /* Change color on hover */
+}
+
+.floating-compose-button {
+  position: fixed;
+  top: 69vh;
+  right: 20px;
+  background-color: transparent; /* Pink background similar to Gmail's compose button */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000; /* Ensures it sits above other content */
+}
+
+.floating-compose-button img {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+}
+
+.close-tag-filter {
+  text-align: right; /* Align the button to the right */
+  margin: 10px;
+}
+
+.close-tag-filter button {
+  padding: 8px 12px;
+  background-color: #f44336; /* Red background */
+  color: white; /* White text */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-tag-filter button:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}

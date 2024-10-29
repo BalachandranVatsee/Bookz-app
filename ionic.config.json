@@ -1,0 +1,7 @@
+{
+  "name": "BookzApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

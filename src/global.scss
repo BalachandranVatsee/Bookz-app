@@ -1,0 +1,131 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+.Page-Heading{
+    background-color: #f8f6f2;
+}
+
+.Page-Heading h3{
+    text-align: center;
+}
+
+.ion-page{
+    position: relative;
+}
+
+.tags-list {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent wrapping */
+  }
+  
+  .tags-list ul {
+    list-style: none; /* Remove default list styles */
+    padding: 5px; /* Remove padding */
+    margin: 0; /* Remove margin */
+    display: inline-block; /* Ensure the list stays in a single line */
+  }
+  
+  .tags-list li {
+    display: inline-flex; /* Display tags in a single line */
+    background-color: #e6e0ec; /* Background color for tags */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px 10px; /* Padding for spacing */
+    margin-right: 10px; /* Spacing between tags */
+    font-size: 14px; /* Font size */
+    gap: 5px;
+  }
+  
+  .tags-images{
+    width: 20px;
+    height: 20px;
+    background: transparent;
+  }
+
+  .page-Footer {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    background-color: #eeece1;
+    padding: 0;
+    display: flex;
+    justify-content: space-around; /* Space the links evenly */
+    border-top: 1px solid #ccc; /* Optional border to separate footer */
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1); /* Adds shadow to the top */
+    z-index: 1000; /* Ensure the footer stays on top of other content */
+}
+
+.footer-link {
+    font-size: 16px;
+    color: black; /* Color for links, adjust as needed */
+    text-decoration: none;
+    padding: 10px;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: black; /* Change color on hover */
+}
+
+.page-Footer a {
+    
+    text-align: center;
+    width: max-content;
+}
+
+.footer-link img{
+    width: 30px;
+    height: auto;
+    background: transparent;
+}
+
+.SortNameTxt{
+    display: flex;
+    align-items: center;
+    gap: 4px;    
+    width: max-content;
+}
+
+.SortNameTxt img{
+    width: 30px;
+    height: 30px;
+
+}
+
+*{
+    background-color: #f8f6f2;
+}

@@ -1,0 +1,49 @@
+<div class="AddingBooks">
+  <div class="topHeader">
+  <div class="back-image">
+  <a [routerLink]="['/books']">
+  <img src="../../assets/icon/arrow-left.png" alt="">
+  </a>
+  </div>
+  <h4>Adding Books</h4>
+  </div>
+  <div class="search-container">
+    <input type="text" [placeholder]="searchPlaceholder" [(ngModel)]="searchQuery" />
+    <div class="search-options">
+      <button 
+        [ngClass]="{'active': searchType === 'isbn'}" 
+        (click)="setSearchType('isbn')">ISBN
+      </button>
+      <button 
+        [ngClass]="{'active': searchType === 'name'}" 
+        (click)="setSearchType('name')">Name
+      </button>
+      <button 
+        [ngClass]="{'active': searchType === 'author'}" 
+        (click)="setSearchType('author')">Author
+      </button>
+    </div>
+    <button (click)="performSearch()" [disabled]="!searchType || !searchQuery">Search</button>
+  </div>
+  
+  <div class="card-container" *ngIf="showResults && filteredBooks.length > 0">
+    <div class="card" #card *ngFor="let card of filteredBooks; let i = index; trackBy: trackByFn" [style.zIndex]="filteredBooks.length - i">
+      <img [src]="card.thumbnail" alt="{{ card.name }}" class="book-image">
+      <h2>{{ card.name }}</h2>
+      <p>{{ card.author }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="showResults && filteredBooks.length === 0" class="no-results">
+    <p>No results found</p>
+  </div>
+
+  <div class="addingOptions">
+    <p class="addBooks">
+      Add to My Books
+    </p>
+    <p class="addWishList">
+      Add to Wishlist
+    </p>
+  </div>
+</div>

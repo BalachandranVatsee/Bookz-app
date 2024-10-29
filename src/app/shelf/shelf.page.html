@@ -1,0 +1,49 @@
+<div class="Page-Heading">
+  <h3>Yours Shelf</h3>
+</div>
+
+<div *ngIf="!selectedBook" class="tags-list">
+  <ul>
+    <li><img src="../../assets/icon/poker-cards.png" alt="" class="tags-images">2024</li>
+    <li><img src="../../assets/icon/reading.png" alt="" class="tags-images">Reading</li>
+    <li><img src="../../assets/icon/pencil-case.png" alt="" class="tags-images">Kindle</li>
+    <li><img src="../../assets/icon/pencil-case.png" alt="" class="tags-images">Kindle</li>
+  </ul>
+</div>
+
+<div *ngIf="!selectedBook" class="SortNameTxt" (click)="sortBooks()">
+  <img src="../../assets/icon/up-down.png" alt="">
+  <h4>Name</h4>
+</div>
+
+<div *ngIf="!selectedBook" class="books-container">
+  <div class="card-row" *ngFor="let row of books | slice:0; let i = index">
+    <div class="card-col" *ngFor="let book of books.slice(i * 2, (i + 1) * 2)">
+      <div class="book-card" (click)="selectingBook(book)">
+        <img [src]="book.thumbnail" alt="{{book.title}}">
+        <h4 *ngIf="book.title">{{ book.title }}</h4>
+        <p>By {{ book.authors.join(', ') }}</p>
+        <p>{{book.category}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Display selected book details as a card below the book list -->
+<div *ngIf="selectedBook">
+  <div class="selected-book-card">
+  <img [src]="selectedBook.thumbnail || 'assets/placeholder.png'" alt="{{ selectedBook.title }}" style="width: 100%;">
+  <h2>{{ selectedBook.title }}</h2>
+  <h4>By: {{ selectedBook.authors.join(', ') }}</h4>
+  <p class="details-font-bg"><img src="../../assets/icon/note.png" alt=""><strong>{{ selectedBook.categories }}</strong></p>
+  <p class="details-font-bg"><img src="../../assets/icon/notes.png" alt=""><strong>{{ selectedBook.publishedDate }}</strong></p>
+  <p class="details-font-bg"><img src="../../assets/icon/format.png" alt=""><strong>{{ selectedBook.format }}</strong></p>
+  <p class="details-font-bg"><img src="../../assets/icon/pencil-case.png" alt=""><strong>{{ selectedBook.publisher }}</strong></p>
+  <span class="close" (click)="closeSelectingBook()">close</span>
+  </div>
+</div>
+
+<div *ngIf="!selectedBook" class="page-Footer">
+  <a class="footer-link"><img src="../../assets/icon/format.png" alt=""><br />Shelf</a>
+  <a [routerLink]="['/books']" class="footer-link"><img src="../../assets/icon/tutorial.png" alt=""><br />Books</a>
+</div>
