@@ -1,7 +1,4 @@
 .books-container{
-  display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
     max-height: 100vh;
     overflow-y: auto;
     margin: 0 auto;
@@ -241,7 +238,7 @@
 
 .floating-compose-button {
   position: fixed;
-  top: 69vh;
+  top: 75vh;
   right: 20px;
   background-color: transparent; /* Pink background similar to Gmail's compose button */
   border-radius: 50%;

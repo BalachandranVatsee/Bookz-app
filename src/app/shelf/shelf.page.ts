@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BookService } from '../book.service';
 import { Router } from '@angular/router';
+import { BookDataService } from '../shared/book-data.service';
 
 @Component({
   selector: 'app-shelf',
@@ -8,74 +9,128 @@ import { Router } from '@angular/router';
   styleUrls: ['./shelf.page.scss'],
 })
 export class ShelfPage implements OnInit {
-  books: any[] = [];
+  swipedBooks: any[] = []; // Initialize an empty array for swiped books
+  selectedBook: any | null = null; // To hold the currently selected book
   isAscending: boolean = true;
-  selectedBook: any = null; // Holds the selected book for the details display
+  tags: string[] = []; // List of tags
+  newTag: string = ''; // Input for new tag
+  isTagPopupOpen: boolean = false;
+  filteredBooks: any[] | null = null; // Array to store filtered books
+  selectedTag: string = ''; // Currently selected tag for filtering
+  router: any;
 
-  constructor(private bookService: BookService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.fetchBooks('search terms');
+  
+  goBack() {
+    this.selectedBook = null; // Reset selected book
+    this.clearFilter(); // Clear any filters if needed
+    this.router.navigate(['/books']); // Navigate back to the desired route
   }
 
-  // Method to select a book and display its details
-  selectingBook(book: any) {
-    this.selectedBook = book; // Set the selected book
+  constructor(private bookDataService: BookDataService) {}
+
+  openTagPopup(){
+    this.isTagPopupOpen = true;
   }
 
-  // Method to close the selected book details and return to the book list
-  closeSelectingBook() {
-    this.selectedBook = !this.selectedBook; // Clear the selected book
-    this.selectedBook = null;
+  closeTagPopup(){
+    this.isTagPopupOpen=!this.isTagPopupOpen;
+  }
+
+  ngOnInit() {
+    this.bookDataService.swipedBooks$.subscribe(books => {
+      this.swipedBooks = books;
+      console.log('Books loaded from shared service:', this.swipedBooks);
+    });
+  }
+
+  getSwipedBooks() {
+    const storedBooks = localStorage.getItem('swipedBooks');
+    if (storedBooks) {
+        this.swipedBooks = JSON.parse(storedBooks);
+        console.log('Books loaded from local storage:', this.swipedBooks);
+    } else {
+        console.log('No books found in local storage.');
+    }
 }
 
-  // Method to fetch books based on a search term
-  fetchBooks(searchTerm: string): void {
-    if (!searchTerm) {
-      console.warn('Search term is empty, fetching default books.');
-      searchTerm = 'harry potter';
-    }
-    this.bookService.getBooks(searchTerm).subscribe(
-      (response) => {
-        if (response && response.items) {
-          this.books = response.items.map((item: any) => {
-            let thumbnail = item.volumeInfo.imageLinks?.thumbnail || 'assets/placeholder.png';
-            if (thumbnail.startsWith('http://')) {
-              thumbnail = thumbnail.replace('http://', 'https://');
-            }
-
-            const format = item.saleInfo.isEbook ? 'Ebook' : 'Physical Book';
-            return {
-              title: item.volumeInfo.title,
-              authors: item.volumeInfo.authors,
-              thumbnail: thumbnail,
-              categories: item.volumeInfo.categories,
-              publishedDate: item.volumeInfo.publishedDate,
-              format: format,
-              publisher: item.volumeInfo.publisher
-            };
-          });
-        } else {
-          console.warn('No items found in the response');
-          this.books = [];
-        }
-      },
-      (error) => {
-        console.error('Error fetching books:', error);
-        this.books = [];
-      }
-    );
+  viewBookDetails(book: any) {
+    this.selectedBook = book;
+    console.log('Selected book details:', this.selectedBook);
   }
 
-  // Method to sort books in ascending/descending order
+  closeSelectingBook() {
+    this.selectedBook = null;
+  }
+
+  backToList() {
+    console.log('Returning to book list.');
+    this.selectedBook = null;
+  }
+
   sortBooks(): void {
     this.isAscending = !this.isAscending;
-    this.books.sort((a, b) => {
-      const titleA = a.title.toLowerCase();
-      const titleB = b.title.toLowerCase();
+    this.swipedBooks.sort((a, b) => {
+      const titleA = a.name.toLowerCase();
+      const titleB = b.name.toLowerCase();
       if (titleA < titleB) return this.isAscending ? -1 : 1;
       if (titleA > titleB) return this.isAscending ? 1 : -1;
       return 0;
     });
+  }
+
+  addTag() {
+    if (this.newTag) {
+      // Check if the tag already exists in the tags array
+      const existingTagCount = this.tags.filter(tag => tag === this.newTag).length;
+      
+      if (existingTagCount > 0) {
+        console.log('Tag already exists:', this.newTag);
+        // Push the new tag to selectedBook.tags multiple times based on existing count
+        for (let i = 0; i < existingTagCount + 1; i++) {
+          // Ensure selectedBook.tags is initialized
+          if (!this.selectedBook.tags) {
+            this.selectedBook.tags = [];
+          }
+          this.selectedBook.tags.push(this.newTag);
+        }
+        console.log('Updated selected book details with duplicate tag:', this.selectedBook);
+      } else {
+        this.tags.push(this.newTag);
+        
+        // Add the tag to the selected book if available
+        if (this.selectedBook) {
+          if (!this.selectedBook.tags) {
+            this.selectedBook.tags = [];
+          }
+          this.selectedBook.tags.push(this.newTag);
+          console.log('Updated selected book details:', this.selectedBook);
+        }
+      }
+  
+      this.newTag = '';
+      this.closeTagPopup();
+    }
+  }
+  
+
+  // Filter books based on the selected tag
+  filterBooksByTag(tag: string) {
+    this.selectedTag = tag;
+    this.filteredBooks = this.swipedBooks.filter(book => 
+      book.tags && book.tags.includes(tag)
+    );
+
+    console.log('Filtered books with tag', tag, ':', this.filteredBooks);
+  }
+
+  // Clear the filtered books and show all books again
+  clearFilter() {
+    this.filteredBooks = null;
+    this.selectedTag = '';
+  }
+
+  onComposeClick(): void {
+    // Navigate to the 'Add Book' page or open a compose modal
+    this.router.navigate(['/add-book']);
   }
 }

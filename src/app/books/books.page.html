@@ -49,9 +49,9 @@
   </ul>
 </div> -->
 
-<div *ngIf="!selectedBook && !filteredBooks" class="SortNameTxt" (click)="sortBooks()">
-  <img src="../../assets/icon/up-down.png" alt="">
-  <h4>Name</h4>
+<div *ngIf="!selectedBook && !filteredBooks" class="SortNameTxt">
+  <img src="../../assets/icon/up-down.png" alt="" (click)="sortBooks()">
+  <h4 (click)="sortBooks()">Name</h4>
 </div>
 
 <div>

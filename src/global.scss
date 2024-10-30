@@ -117,7 +117,7 @@
     display: flex;
     align-items: center;
     gap: 4px;    
-    width: max-content;
+    width: 100%;
 }
 
 .SortNameTxt img{
@@ -128,4 +128,5 @@
 
 *{
     background-color: #f8f6f2;
+    color: #666;
 }

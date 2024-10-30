@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import * as Hammer from 'hammerjs';
 import { BookService } from '../book.service';
+import { Router } from '@angular/router';
+import { BookDataService } from '../shared/book-data.service';
 
 @Component({
   selector: 'app-add-books',
@@ -17,8 +19,13 @@ export class AddBooksPage implements OnInit, AfterViewInit {
   @ViewChildren('card') cardElements!: QueryList<ElementRef>;
   private hammerInstance?: HammerManager;
 
-  constructor(private bookService: BookService) {}
+  constructor(private bookService: BookService, private router: Router, private bookDataService: BookDataService) {} 
 
+
+  
+gotoBooks() {
+  this.router.navigate(['/books']);
+}
   ngOnInit() {}
 
   ngAfterViewInit() {
@@ -32,25 +39,26 @@ export class AddBooksPage implements OnInit, AfterViewInit {
 
   performSearch() {
     if (!this.searchQuery.trim() || !this.searchType) return;
-
+  
     console.log(`Searching for: ${this.searchQuery} with type: ${this.searchType}`);
-
+  
+    // Fetch books based on the search type and query
     this.bookService.getSearchedBooks(this.searchQuery, this.searchType).subscribe(response => {
-        console.log(response); // Log the entire response for inspection
-
-        // Check if there are items returned
+        console.log('API response:', response); // Log the full response
+  
+        // Check if items were returned
         if (response.items && response.items.length > 0) {
             this.filteredBooks = response.items.map((item: any) => ({
                 name: item.volumeInfo.title,
                 author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                isbn: item.volumeInfo.industryIdentifiers ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A',
-                thumbnail: item.volumeInfo.imageLinks && item.volumeInfo.imageLinks.thumbnail 
-                         ? item.volumeInfo.imageLinks.thumbnail.replace('http://', 'https://')
-                         : 'assets/placeholder.png',
-                         categories: item.volumeInfo.categories,
-                         publishedDate: item.volumeInfo.publishedDate,
-                         format: item.saleInfo.isEbook ? 'Ebook' : 'Physical Book',
-                         publisher: item.volumeInfo.publisher
+                isbn: item.volumeInfo.industryIdentifiers
+                    ? item.volumeInfo.industryIdentifiers.find((identifier: any) => identifier.type.includes('ISBN'))?.identifier
+                    : 'N/A',
+                thumbnail: item.volumeInfo.imageLinks?.thumbnail?.replace('http://', 'https://') || 'assets/placeholder.png',
+                categories: item.volumeInfo.categories || [],
+                publishedDate: item.volumeInfo.publishedDate || 'Unknown',
+                format: item.saleInfo.isEbook ? 'Ebook' : 'Physical Book',
+                publisher: item.volumeInfo.publisher || 'Unknown'
             }));
             this.showResults = true;
         } else {
@@ -58,7 +66,7 @@ export class AddBooksPage implements OnInit, AfterViewInit {
             this.filteredBooks = [];
             this.showResults = false;
         }
-
+  
         // Attach swipe listener if there are results
         if (this.showResults) {
             setTimeout(() => this.attachSwipeListenerToTopCard(), 0);
@@ -66,7 +74,8 @@ export class AddBooksPage implements OnInit, AfterViewInit {
     }, error => {
         console.error('Error fetching books:', error); // Log any errors
     });
-}
+  }
+  
 
   attachSwipeListenerToTopCard() {
     if (this.hammerInstance) {
@@ -116,47 +125,32 @@ completeSwipe(card: HTMLElement, x: number, y: number, storeInLocalStorage: bool
   card.style.transform = `translate(${x}px, ${y}px) rotate(${x / 10}deg)`;
 
   setTimeout(() => {
-      const swipedCard = this.filteredBooks.shift();
-      console.log('Swiped Card:', swipedCard); // Log the swiped card
+    const swipedCard = this.filteredBooks.shift();
+    console.log('Swiped Card:', swipedCard); // Log the swiped card
 
-      if (swipedCard) {
-          // Check if this is a left swipe (remove from local storage)
-          if (!storeInLocalStorage) {
-              // Retrieve existing books from local storage
-              const storedBooks = JSON.parse(localStorage.getItem('swipedBooks') || '[]');
+    if (swipedCard) {
+        if (storeInLocalStorage) {
+            // Handle right swipe (add to shared service)
+            this.bookDataService.addBook(swipedCard);
+        } else {
+            // Handle left swipe (remove from shared service)
+            this.bookDataService.removeBook(swipedCard.isbn);
+        }
+    }
 
-              // Remove the swiped book from local storage using ISBN
-              const updatedStoredBooks = storedBooks.filter((book: any) => book.isbn !== swipedCard.isbn);
-              localStorage.setItem('swipedBooks', JSON.stringify(updatedStoredBooks));
-              
-              // Show alert message for left swipe
-              
-          } else {
-              // Handle right swipe (add to local storage)
-              const storedBooks = JSON.parse(localStorage.getItem('swipedBooks') || '[]');
-              const bookExists = storedBooks.some((book: any) => book.isbn === swipedCard.isbn);
+    // Reset the card's transform and transition
+    card.style.transition = 'none';
+    card.style.transform = 'translate(0, 0) rotate(0deg)';
 
-              if (!bookExists) {
-                  storedBooks.push(swipedCard);
-                  localStorage.setItem('swipedBooks', JSON.stringify(storedBooks));
-
-                  // Show alert message for right swipe
-                 
-              }
-          }
-          this.filteredBooks.push(swipedCard);
-      }
-
-      card.style.transition = 'none';
-      card.style.transform = 'translate(0, 0) rotate(0deg)';
-
-      setTimeout(() => {
-          if (this.filteredBooks.length > 0) {
-              this.attachSwipeListenerToTopCard();
-          }
-      }, 50);
+    setTimeout(() => {
+        if (this.filteredBooks.length > 0) {
+            this.attachSwipeListenerToTopCard();
+        }
+    }, 50);
   }, 300);
 }
+
+
 
 
 

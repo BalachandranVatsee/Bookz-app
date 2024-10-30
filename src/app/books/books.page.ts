@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BookDataService } from '../shared/book-data.service';
 
 @Component({
   selector: 'app-books',
@@ -26,7 +27,7 @@ export class BooksPage implements OnInit {
     this.router.navigate(['/books']); // Navigate back to the desired route
   }
 
-  constructor() {}
+  constructor(private bookDataService: BookDataService) {}
 
   openTagPopup(){
     this.isTagPopupOpen = true;
@@ -37,18 +38,21 @@ export class BooksPage implements OnInit {
   }
 
   ngOnInit() {
-    this.getSwipedBooks();
+    this.bookDataService.swipedBooks$.subscribe(books => {
+      this.swipedBooks = books;
+      console.log('Books loaded from shared service:', this.swipedBooks);
+    });
   }
 
   getSwipedBooks() {
     const storedBooks = localStorage.getItem('swipedBooks');
     if (storedBooks) {
-      this.swipedBooks = JSON.parse(storedBooks);
-      console.log('Books loaded from local storage:', this.swipedBooks);
+        this.swipedBooks = JSON.parse(storedBooks);
+        console.log('Books loaded from local storage:', this.swipedBooks);
     } else {
-      console.log('No books found in local storage.');
+        console.log('No books found in local storage.');
     }
-  }
+}
 
   viewBookDetails(book: any) {
     this.selectedBook = book;
