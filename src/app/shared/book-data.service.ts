@@ -1,11 +1,20 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+// Define a Book interface for better type safety
+export interface Book {
+  isbn: string;
+  title: string;
+  author: string;
+  imageUrl: string;
+  // Add other properties as needed
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class BookDataService {
-  private swipedBooksSubject = new BehaviorSubject<any[]>([]);
+  private swipedBooksSubject = new BehaviorSubject<Book[]>([]);
   swipedBooks$ = this.swipedBooksSubject.asObservable();
 
   constructor() {
@@ -13,13 +22,18 @@ export class BookDataService {
   }
 
   private loadFromLocalStorage() {
-    const storedBooks = localStorage.getItem('swipedBooks');
-    if (storedBooks) {
-      this.swipedBooksSubject.next(JSON.parse(storedBooks));
+    try {
+      const storedBooks = localStorage.getItem('swipedBooks');
+      if (storedBooks) {
+        this.swipedBooksSubject.next(JSON.parse(storedBooks));
+      }
+    } catch (error) {
+      console.error('Failed to load books from localStorage', error);
+      this.swipedBooksSubject.next([]); // Start with an empty array on error
     }
   }
 
-  addBook(book: any) {
+  addBook(book: Book) {
     const currentBooks = this.swipedBooksSubject.value;
     if (!currentBooks.some(b => b.isbn === book.isbn)) {
       currentBooks.push(book);
@@ -34,7 +48,12 @@ export class BookDataService {
     this.saveToLocalStorage(updatedBooks);
   }
 
-  private saveToLocalStorage(books: any[]) {
+  private saveToLocalStorage(books: Book[]) {
     localStorage.setItem('swipedBooks', JSON.stringify(books));
+  }
+
+  // Method to get current list of books
+  getBooks(): Book[] {
+    return this.swipedBooksSubject.value; // Returns the current list of swiped books
   }
 }

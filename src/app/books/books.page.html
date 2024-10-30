@@ -1,114 +1,19 @@
-<div class="Page-Heading">
-  <h3>Your Books</h3>
-</div>
-
-<div *ngIf="!selectedBook && !filteredBooks" class="tags-list">
-  
-  <ul>
-    <li *ngFor="let tag of tags" (click)="filterBooksByTag(tag)">
-      <img src="../../assets/icon/reading.png" alt="" class="tags-images">
-      {{ tag }}
-    </li>
-  </ul>
-</div>
-
-
-<div *ngIf="filteredBooks && filteredBooks.length > 0" class="filtered-books-container">
-  <div class="close-tag-filter">
-    <button (click)="goBack()">Close</button>
-  </div>
-  <h4 style="text-align: center;">Books with tag: "{{ selectedTag }}"</h4>
-
-  <div class="books-container">
-  
-    <div class="card-row">
-    <div class="card-col" *ngFor="let book of filteredBooks">
-      <div class="book-card">
-    <img [src]="book.thumbnail || 'assets/placeholder.png'" alt="{{ book.name }}">
-    <h4>{{ book.name }}</h4>
-    <p>By {{ book.author }}</p>
-    </div>
-    </div>
-    </div>
-    <!-- Add other book details as needed -->
-  
-  </div>
-</div>
-
-<!-- Show message if no books have the selected tag -->
-<div *ngIf="filteredBooks && filteredBooks.length === 0">
-  <p>No books found with the tag "{{ selectedTag }}"</p>
-</div>
-
-<!-- <div *ngIf="!selectedBook" class="tags-list">
-  <ul>
-    <li *ngFor="let tag of tags">
-      <img src="../../assets/icon/reading.png" alt="" class="tags-images">
-      {{ tag }}
-    </li>
-  </ul>
-</div> -->
-
-<div *ngIf="!selectedBook && !filteredBooks" class="SortNameTxt">
-  <img src="../../assets/icon/up-down.png" alt="" (click)="sortBooks()">
-  <h4 (click)="sortBooks()">Name</h4>
-</div>
-
-<div>
-  <div *ngIf="selectedBook; else bookList">
-    <div class="selected-book-details">
-      <img [src]="selectedBook.thumbnail || 'assets/placeholder.png'" alt="{{ selectedBook.title }}" style="width: 100%;">
-      <h2>{{ selectedBook.name }}</h2>
-      <h4>By: {{ selectedBook.author }}</h4>
-      <p class="details-font-bg"><img src="../../assets/icon/note.png" alt=""><strong>{{ selectedBook.categories }}</strong></p>
-      <p class="details-font-bg"><img src="../../assets/icon/notes.png" alt=""><strong>{{ selectedBook.publishedDate }}</strong></p>
-      <p class="details-font-bg"><img src="../../assets/icon/format.png" alt=""><strong>{{ selectedBook.format }}</strong></p>
-      <p class="details-font-bg"><img src="../../assets/icon/pencil-case.png" alt=""><strong>{{ selectedBook.publisher }}</strong></p>
-      <span class="close" (click)="closeSelectingBook()">close</span>
-      <span class="close" (click)="openTagPopup()">Adding Tags</span>
+<div class="card-container" *ngIf="books.length > 0">
+  <div
+    class="card"
+    *ngFor="let book of books; let i = index; trackBy: trackByFn"
+    [style.zIndex]="books.length - i"
+    #card
+    [style.display]="i === currentIndex ? 'flex' : 'none'" 
+  >
+    <img [src]="book.imageUrl" alt="{{ book.title }}" class="book-image" />
+    <div class="book-details">
+      <h2>{{ book.title }}</h2>
+      <p>{{ book.author }}</p>
     </div>
   </div>
-
-  <ng-template #bookList>
-    <div class="books-container">
-      <div *ngIf="swipedBooks.length > 0; else noBooks">
-        <div class="card-row">
-          <div class="card-col" *ngFor="let book of swipedBooks">
-            <div class="book-card" (click)="viewBookDetails(book)">
-              <img [src]="book.thumbnail" alt="{{ book.name }}">
-              <h4 *ngIf="book.name">{{ book.name }}</h4>
-              <p>By {{ book.author }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #noBooks>
-      <div class="emptyImage">
-        <img src="../../assets/images/BooksEmptyImages.png" alt="">
-      </div>
-    </ng-template>
-  </ng-template>
 </div>
 
-<div *ngIf="!selectedBook && !filteredBooks" class="floating-compose-button">
-  <a [routerLink]="['/add-books']">
-  <img src="../../assets/icon/add-button.png" alt="Compose Icon" />
-  </a>
-</div>
-
-<div *ngIf="!selectedBook && !filteredBooks" class="page-Footer">
-  <a [routerLink]="['/shelf']" class="footer-link"><img src="../../assets/icon/format.png" alt=""><br />Shelf</a>
-  <a class="footer-link"><img src="../../assets/icon/tutorial.png" alt=""><br />Books</a>
-</div>
-
-<!-- Tag Entry Popup -->
-<div *ngIf="isTagPopupOpen" class="tag-popup">
-  <div class="popup-content">
-    <h4>Add Tag</h4>
-    <input type="text" [(ngModel)]="newTag" placeholder="Enter tag name" />
-    <button (click)="addTag()">Add</button>
-    <button (click)="closeTagPopup()">Cancel</button>
-  </div>
+<div *ngIf="books.length === 0" class="no-books">
+  <p>No books available. Add some books to get started!</p>
 </div>
