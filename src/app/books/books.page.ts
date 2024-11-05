@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import * as Hammer from 'hammerjs';
-import { BookDataService, Book } from '../shared/book-data.service';
 
 @Component({
   selector: 'app-books',
@@ -8,104 +7,71 @@ import { BookDataService, Book } from '../shared/book-data.service';
   styleUrls: ['./books.page.scss'],
 })
 export class BooksPage implements OnInit, AfterViewInit {
-  books: Book[] = [];
-  currentIndex: number = 0;
+  @ViewChildren('card') cards!: QueryList<ElementRef>;
 
-  @ViewChildren('card') cardElements!: QueryList<ElementRef>;
-  private hammerInstance?: HammerManager;
+  books = [
+    { id: 1, title: 'Book 1' },
+    { id: 2, title: 'Book 2' },
+    { id: 3, title: 'Book 3' },
+    { id: 4, title: 'Book 4' },
+    { id: 5, title: 'Book 5' },
+    { id: 6, title: 'Book 6' },
+    // Add more book objects as needed
+  ];
 
-  constructor(private bookDataService: BookDataService) {}
+  ngOnInit(): void {}
 
-  ngOnInit() {
-    this.bookDataService.swipedBooks$.subscribe(books => {
-      this.books = books;
-      this.currentIndex = 0;
-      if (this.books.length > 0) {
-        this.attachSwipeListenerToCurrentCard();
-      }
+  ngAfterViewInit(): void {
+    this.cards.forEach((card, index) => {
+      const hammer = new Hammer(card.nativeElement);
+      hammer.on('pan', (event) => this.handlePan(event, index));
+      hammer.on('panend', (event) => this.handlePanEnd(event, index));
     });
   }
 
-  ngAfterViewInit() {
-    if (this.books.length > 0) {
-      this.attachSwipeListenerToCurrentCard();
-    }
+  handlePan(event: HammerInput, index: number): void {
+    const card = this.cards.toArray()[index].nativeElement;
+
+    // Allow only horizontal movement
+    card.style.transform = `translateX(${event.deltaX}px)`;
   }
 
-  attachSwipeListenerToCurrentCard() {
-    if (this.hammerInstance) {
-      this.hammerInstance.destroy();
-    }
+  handlePanEnd(event: HammerInput, index: number): void {
+    const threshold = 100; // Distance to trigger a swipe action
+    const card = this.cards.toArray()[index].nativeElement;
 
-    const currentCardElement = this.cardElements.toArray()[this.currentIndex]?.nativeElement;
-    if (currentCardElement) {
-      this.hammerInstance = new Hammer(currentCardElement);
-      this.hammerInstance.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
-      this.hammerInstance.on('pan', (e) => this.onPan(e));
-      this.hammerInstance.on('panend', (e) => this.onPanEnd(e));
-    }
-  }
-
-  onPan(event: HammerInput) {
-    const card = this.cardElements.toArray()[this.currentIndex]?.nativeElement;
-    if (card) {
-      card.style.transform = `translateX(${event.deltaX}px) rotate(${event.deltaX / 10}deg)`;
-    }
-  }
-
-  onPanEnd(event: HammerInput) {
-    const card = this.cardElements.toArray()[this.currentIndex]?.nativeElement;
-    if (card) {
-      const swipeThreshold = 100;
-
-      if (Math.abs(event.deltaX) > swipeThreshold) {
-        const isSwipeRight = event.deltaX > 0;
-        this.completeSwipe(card, isSwipeRight);
+    // Check if the swipe is beyond the threshold
+    if (Math.abs(event.deltaX) > threshold) {
+      if (event.deltaX > 0) {
+        // Swipe right
+        this.addToWishlist(this.books[index]);
+        card.style.transition = 'transform 0.3s ease-out'; // Smooth exit
+        card.style.transform = 'translateX(100vw)'; // Move off screen to the right
       } else {
-        this.resetSwipe(card);
+        // Swipe left
+        this.addToCollection(this.books[index]);
+        card.style.transition = 'transform 0.3s ease-out'; // Smooth exit
+        card.style.transform = 'translateX(-100vw)'; // Move off screen to the left
       }
+    } else {
+      // Reset the position if the swipe wasn't enough
+      card.style.transition = 'transform 0.3s ease-out'; // Smooth reset
+      card.style.transform = 'translateX(0)'; // Reset to original position
     }
-  }
 
-  completeSwipe(card: HTMLElement, isSwipeRight: boolean) {
-    const cardOffset = isSwipeRight ? window.innerWidth : -window.innerWidth;
-    card.style.transition = 'transform 0.3s ease';
-    card.style.transform = `translateX(${cardOffset}px)`;
-
+    // Reset transition style after the animation
     setTimeout(() => {
-      // Update the index based on the swipe direction
-      this.currentIndex = isSwipeRight ? (this.currentIndex - 1 + this.books.length) % this.books.length : (this.currentIndex + 1) % this.books.length;
-
-      // Reset the card position and reattach swipe listeners
-      this.updateCardPositions();
-      this.attachSwipeListenerToCurrentCard();
+      card.style.transition = ''; // Clear transition style
     }, 300);
   }
 
-  resetSwipe(card: HTMLElement) {
-    card.style.transition = 'none';
-    card.style.transform = 'translateX(0) rotate(0deg)';
+  addToWishlist(book: any): void {
+    console.log('Added to Wishlist:', book);
+    this.books = this.books.filter(b => b.id !== book.id); // Remove swiped book
   }
 
-  updateCardPositions() {
-    const cards = this.cardElements.toArray();
-
-    cards.forEach((card, index) => {
-      const cardElement = card.nativeElement;
-      cardElement.style.transition = 'none';
-      cardElement.style.transform = 'translateX(0) rotate(0deg)';
-      cardElement.style.zIndex = `${cards.length - index}`;
-
-      // Show only the current card
-      if (index === this.currentIndex) {
-        cardElement.style.display = 'flex';
-      } else {
-        cardElement.style.display = 'none';
-      }
-    });
-  }
-
-  trackByFn(index: number): number {
-    return index;
+  addToCollection(book: any): void {
+    console.log('Added to Collection:', book);
+    this.books = this.books.filter(b => b.id !== book.id); // Remove swiped book
   }
 }

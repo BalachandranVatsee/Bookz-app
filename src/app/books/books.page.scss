@@ -1,34 +1,48 @@
-.card-container {
+.swipe-container {
   position: relative;
-  width: 80%;
-  height: 400px; // Adjust height as needed
-  margin: 0 auto;
+  width: 100%;
+  height: 100vh; /* Full height of the viewport */
+  overflow: hidden; /* Prevent overflow */
 }
 
-.card {
+.swipe-card {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, opacity 0.3s ease; // Include opacity transition
+  width: 90%; /* Adjust width as necessary */
+  max-width: 400px; /* Maximum width for the card */
+  left: 50%;
+  transform: translateX(-50%); /* Center the card */
+  transition: transform 0.3s ease; /* Smooth transition for animations */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+  background-color: #fff; /* Background color for the card */
+  border-radius: 10px; /* Rounded corners */
+  padding: 20px; /* Padding for the card content */
+}
+
+.swipe-card h4 {
+  margin: 0; /* Remove default margins */
+  font-size: 24px; /* Adjust font size as needed */
+  text-align: center; /* Center align text */
+}
+
+
+
+.floating-compose-button {
+  position: fixed;
+  top: 75vh;
+  right: 20px;
+  background-color: transparent; /* Pink background similar to Gmail's compose button */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  text-align: center;
-}
-
-.book-image {
-  width: 100px;
-  height: auto;
-  border-radius: 5px;
-}
-
-.no-books {
-  text-align: center;
-  color: gray;
-  margin-top: 20px;
-}
+  cursor: pointer;
+  z-index: 1000; /* Ensures it sits above other content */
+  }
+  
+  .floating-compose-button img {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  }

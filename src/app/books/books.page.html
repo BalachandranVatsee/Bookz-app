@@ -1,19 +1,21 @@
-<div class="card-container" *ngIf="books.length > 0">
-  <div
-    class="card"
-    *ngFor="let book of books; let i = index; trackBy: trackByFn"
-    [style.zIndex]="books.length - i"
-    #card
-    [style.display]="i === currentIndex ? 'flex' : 'none'" 
-  >
-    <img [src]="book.imageUrl" alt="{{ book.title }}" class="book-image" />
-    <div class="book-details">
-      <h2>{{ book.title }}</h2>
-      <p>{{ book.author }}</p>
-    </div>
+<div class="Page-Heading">
+  <h3>Your Books</h3>
+</div>
+
+<div class="swipe-container">
+  <div *ngFor="let book of books; let i = index" #card class="swipe-card">
+    <h4>{{ book.title }}</h4>
+    <!-- Add any additional book details here -->
   </div>
 </div>
 
-<div *ngIf="books.length === 0" class="no-books">
-  <p>No books available. Add some books to get started!</p>
+<div class="floating-compose-button">
+  <a [routerLink]="['/add-books']">
+    <img src="../../assets/icon/add-button.png" alt="Compose Icon" />
+  </a>
+</div>
+
+<div class="page-Footer">
+  <a [routerLink]="['/shelf']" class="footer-link"><img src="../../assets/icon/format.png" alt=""><br />Shelf</a>
+  <a class="footer-link"><img src="../../assets/icon/tutorial.png" alt=""><br />Books</a>
 </div>
