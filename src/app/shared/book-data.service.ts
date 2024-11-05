@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 // Define a Book interface for better type safety
 export interface Book {
   isbn: string;
+  name: string;
   title: string;
   author: string;
   imageUrl: string;

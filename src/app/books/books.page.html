@@ -3,9 +3,13 @@
 </div>
 
 <div class="swipe-container">
-  <div *ngFor="let book of books; let i = index" #card class="swipe-card">
+  <!-- <div *ngFor="let book of books; let i = index" #card class="swipe-card">
     <h4>{{ book.title }}</h4>
-    <!-- Add any additional book details here -->
+  </div> -->
+  <div *ngFor="let book of books; let i = index" #card class="swipe-card">
+    
+      <h2>{{ book.name }}</h2>
+      
   </div>
 </div>
 
